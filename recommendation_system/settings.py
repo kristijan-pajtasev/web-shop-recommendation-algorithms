@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'recommendation_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
+        'NAME': 'shop',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
