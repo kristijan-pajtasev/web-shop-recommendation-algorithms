@@ -12,7 +12,9 @@ from .algorithms import knn
 #     return row
 # Create your views here.
 
-def test(request):
+def similar(request, product_id):
+    print("PRODUCT ID %s" % product_id)
+
     with connection.cursor() as cursor:
         sql = '''
             SELECT product_id, product_width_cm, product_length_cm, product_height_cm  

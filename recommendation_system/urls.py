@@ -19,5 +19,5 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('test', views.test)
+    path('similar/<slug:product_id>', views.similar)
 ]
