@@ -23,6 +23,6 @@ def test(request):
         '''
         cursor.execute(sql)
         products = cursor.fetchall()
-    knn(products)
-    return HttpResponse(products)
+    recommended = knn(products)
+    return HttpResponse(recommended)
 
