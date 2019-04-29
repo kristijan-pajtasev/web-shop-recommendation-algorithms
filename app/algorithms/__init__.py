@@ -61,4 +61,10 @@ def market_basket(sales, product_id):
     # print(basket['6c90c0f6c2d89eb816b9e205b9d6a36a'].sum())
     # print(basket['6c90c0f6c2d89eb816b9e205b9d6a36a'])
     # print(rules[product_id])
-    return basket
+
+    consequents = target.sort_values(by=['confidence'], ascending=False)['consequents']
+
+    results = []
+    for recommended in consequents.values:
+        results.append(list(recommended))
+    return results

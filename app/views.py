@@ -50,6 +50,6 @@ def basket(request, order_id):
         results = market_basket(orders, product_id)
 
     res = {}
-    res['db'] = orders
+    res['recommended'] = results
     return JsonResponse(res)
 
