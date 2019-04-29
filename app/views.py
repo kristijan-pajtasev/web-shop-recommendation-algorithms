@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.db import connection
 from .algorithms import knn, market_basket
+from django.http import JsonResponse
 
 
 def similar(request, product_id):
@@ -23,7 +24,10 @@ def similar(request, product_id):
         cursor.execute(sql_product, [product_id])
         product = cursor.fetchone()
     recommended = knn(products, product)
-    return HttpResponse(recommended)
+    response = {}
+    print(recommended)
+    response['ids'] = list(recommended)
+    return JsonResponse(response)
 
 def basket(request, order_id):
     print("ORDER ID %s" % order_id)
