@@ -55,6 +55,9 @@ def market_basket(sales, product_id):
     print(filtered)
     # 6c90c0f6c2d89eb816b9e205b9d6a36a
 
+    target = rules[(rules['antecedents'] == {product_id})]
+    print('target')
+    print(target)
     # print(basket['6c90c0f6c2d89eb816b9e205b9d6a36a'].sum())
     # print(basket['6c90c0f6c2d89eb816b9e205b9d6a36a'])
     # print(rules[product_id])
