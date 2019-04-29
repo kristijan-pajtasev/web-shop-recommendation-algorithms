@@ -21,7 +21,7 @@ def knn(products, product):
     return recommended
 
 
-def market_basket(sales):
+def market_basket(sales, product_id):
 
     # df = pd.io.parsers.read_csv("olist_order_items_dataset.csv")
     df = pd.DataFrame(sales, columns=["order_id","product_id"])
@@ -41,7 +41,7 @@ def market_basket(sales):
     print('basket_sets')
     print(basket_sets)
 
-    frequent_itemsets = apriori(basket_sets, min_support=0.07, use_colnames=True)
+    frequent_itemsets = apriori(basket, min_support=0.07, use_colnames=True)
     print('frequent itemsets')
     print(frequent_itemsets.head())
 
@@ -57,4 +57,5 @@ def market_basket(sales):
 
     # print(basket['6c90c0f6c2d89eb816b9e205b9d6a36a'].sum())
     # print(basket['6c90c0f6c2d89eb816b9e205b9d6a36a'])
-    return basket_sets
+    # print(rules[product_id])
+    return basket

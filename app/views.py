@@ -31,6 +31,7 @@ def similar(request, product_id):
 
 def basket(request, order_id):
     print("ORDER ID %s" % order_id)
+    product_id = 'e95ee6822b66ac6058e2e4aff656071a'
 
     with connection.cursor() as cursor:
         sql_all = '''
@@ -44,9 +45,11 @@ def basket(request, order_id):
             ON O.order_id = OD.order_id
             group by O.order_id, O.product_id;
         '''
-        cursor.execute(sql_all, ['e95ee6822b66ac6058e2e4aff656071a'])
+        cursor.execute(sql_all, [product_id])
         orders = cursor.fetchall()
-        results = market_basket(orders)
+        results = market_basket(orders, product_id)
 
-    return HttpResponse(results)
+    res = {}
+    res['db'] = orders
+    return JsonResponse(res)
 
