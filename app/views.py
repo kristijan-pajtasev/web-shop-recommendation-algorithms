@@ -3,14 +3,6 @@ from django.http import HttpResponse
 from django.db import connection
 from .algorithms import knn, market_basket
 
-# def my_custom_sql(self):
-#     with connection.cursor() as cursor:
-#         cursor.execute("UPDATE bar SET foo = 1 WHERE baz = %s", [self.baz])
-#         cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
-#         row = cursor.fetchone()
-#
-#     return row
-# Create your views here.
 
 def similar(request, product_id):
     print("PRODUCT ID %s" % product_id)
