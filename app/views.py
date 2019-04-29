@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db import connection
-from .algorithms import knn
+from .algorithms import knn, market_basket
 
 # def my_custom_sql(self):
 #     with connection.cursor() as cursor:
@@ -32,4 +32,25 @@ def similar(request, product_id):
         product = cursor.fetchone()
     recommended = knn(products, product)
     return HttpResponse(recommended)
+
+def basket(request, order_id):
+    print("ORDER ID %s" % order_id)
+
+    with connection.cursor() as cursor:
+        sql_all = '''
+            select O.order_id, O.product_id 
+            from olist.orders as O 
+            INNER JOIN (
+                select distinct order_id 
+                from olist.orders 
+                where product_id=%s
+            ) as OD 
+            ON O.order_id = OD.order_id
+            group by O.order_id, O.product_id;
+        '''
+        cursor.execute(sql_all, ['e95ee6822b66ac6058e2e4aff656071a'])
+        orders = cursor.fetchall()
+        results = market_basket(orders)
+
+    return HttpResponse(results)
 

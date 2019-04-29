@@ -19,5 +19,6 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('similar/<slug:product_id>', views.similar)
+    path('similar/<slug:product_id>', views.similar),
+    path('market_basket/<slug:order_id>', views.basket)
 ]
