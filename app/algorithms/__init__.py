@@ -27,7 +27,7 @@ def knn(products, product):
     return recommended
 
 
-def market_basket(sales, product_id):
+def market_basket(sales, product_ids):
 
     # df = pd.io.parsers.read_csv("olist_order_items_dataset.csv")
     df = pd.DataFrame(sales, columns=["order_id","product_id"])
@@ -57,12 +57,12 @@ def market_basket(sales, product_id):
     print(filtered)
     # 6c90c0f6c2d89eb816b9e205b9d6a36a
 
-    target = rules[(rules['antecedents'] == {product_id})]
+    print("ANTECEDENTS")
+    print(rules['antecedents'])
+    # target = rules[(rules['antecedents'] == {product_ids[0]})]
+    target = rules[(rules['antecedents'] == set(product_ids))]
     print('target')
     print(target)
-    # print(basket['6c90c0f6c2d89eb816b9e205b9d6a36a'].sum())
-    # print(basket['6c90c0f6c2d89eb816b9e205b9d6a36a'])
-    # print(rules[product_id])
 
     consequents = target.sort_values(by=['confidence'], ascending=False)['consequents']
 

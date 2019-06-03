@@ -26,26 +26,39 @@ def similar(request, product_id):
     response['ids'] = list([p for p in recommended if p != product_id][:5])
     return JsonResponse(response)
 
-def basket(request, order_id):
-    print("ORDER ID %s" % order_id)
-    product_id = 'e95ee6822b66ac6058e2e4aff656071a'
+GET_BASKET_SQL = "SELECT product_id FROM olist.shopping_cart WHERE customer_id=%s"
+
+def basket(request, customer_id):
+    print("CUSTOMER ID %s" % customer_id)
 
     with connection.cursor() as cursor:
-        sql_all = '''
+        cursor.execute(GET_BASKET_SQL, [customer_id])
+        products = cursor.fetchall()
+        print("PRODUCTS FROM CART:")
+        print(products)
+        print(str(list(map(lambda x: x[0], products))).replace("[", "").replace("]", ""))
+        product_ids = list(map(lambda x: x[0], products))
+        product_ids_string = str(product_ids).replace("[", "").replace("]", "")
+
+        sql_param = '''
             select O.order_id, O.product_id 
             from olist.orders as O 
             INNER JOIN (
                 select distinct order_id 
                 from olist.orders 
-                where product_id=%s
+                where product_id IN (%s)
             ) as OD 
             ON O.order_id = OD.order_id
             group by O.order_id, O.product_id;
-        '''
-        cursor.execute(sql_all, [product_id])
-        orders = cursor.fetchall()
-        results = market_basket(orders, product_id)
+        ''' % product_ids_string
+        print("sql", sql_param)
+        print("prduct_ids", product_ids)
+        print("prduct_ids_string", product_ids_string)
 
+        cursor.execute(sql_param)
+        orders = cursor.fetchall()
+        print("orders", orders)
+        results = market_basket(orders, product_ids)
     res = {}
     res['recommended'] = results
     return JsonResponse(res)
