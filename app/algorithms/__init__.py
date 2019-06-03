@@ -2,16 +2,22 @@ from sklearn.neighbors import NearestNeighbors
 import numpy
 import pandas as pd
 from mlxtend.frequent_patterns import apriori, association_rules
-
+from sklearn.preprocessing import StandardScaler
 
 def knn(products, product):
     dataset = numpy.array(products)[:, -3:]
+    target = numpy.array(products)[:, 0:1]
+
+    index = list(target.flatten()).index(product[0])
+
     model = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=5, n_jobs=-1)
+
+    standard_scaler = StandardScaler()
+    dataset = standard_scaler.fit_transform(dataset)
 
     model.fit(dataset)
 
-    target = numpy.array(product)[-3:]
-
+    target = dataset[index]
     predicted = model.kneighbors(numpy.array([target]), n_neighbors=5 + 1)
 
     recommended = []
