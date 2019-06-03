@@ -33,10 +33,6 @@ def market_basket(sales, product_id):
     df = pd.DataFrame(sales, columns=["order_id","product_id"])
 
     df['amount'] = 1
-    # df = df[:100]
-    # print(df.values.size)
-    #
-    # print(df.head())
 
     basket = (df
               .groupby(['order_id', 'product_id'])['amount']
