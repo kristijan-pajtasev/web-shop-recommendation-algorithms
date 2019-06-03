@@ -59,7 +59,12 @@ def basket(request, customer_id):
         orders = cursor.fetchall()
         print("orders", orders)
         results = market_basket(orders, product_ids)
+        print("results", results)
     res = {}
-    res['recommended'] = results
+    res['recommended'] = []
+    for result in results:
+        for product_id in result:
+            if product_id not in res['recommended']:
+                res['recommended'].append(product_id)
     return JsonResponse(res)
 
