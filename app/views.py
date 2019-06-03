@@ -34,6 +34,9 @@ def basket(request, customer_id):
     with connection.cursor() as cursor:
         cursor.execute(GET_BASKET_SQL, [customer_id])
         products = cursor.fetchall()
+        if len(products) == 0:
+            return JsonResponse({"recommended": []})
+
         print("PRODUCTS FROM CART:")
         print(products)
         print(str(list(map(lambda x: x[0], products))).replace("[", "").replace("]", ""))
