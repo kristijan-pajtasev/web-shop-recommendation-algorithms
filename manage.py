@@ -3,8 +3,6 @@
 import os
 import sys
 
-with open('/opt/web-shop-recommendations#') as f:
-    SECRET_KEY = f.read().strip()
 
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'recommendation_system.settings')
