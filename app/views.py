@@ -14,16 +14,11 @@ def similar(request, product_id):
             FROM olist.products 
             WHERE   product_width_cm is not null AND 
                     product_length_cm is not null AND 
-                    product_height_cm is not null AND
-                    product_id != %s
+                    product_height_cm is not null
         '''
-        cursor.execute(sql_all, [product_id])
+        cursor.execute(sql_all)
         products = cursor.fetchall()
-
-        sql_product = '''select product_id, product_width_cm, product_length_cm, product_height_cm 
-                        from olist.products where product_id = %s'''
-        cursor.execute(sql_product, [product_id])
-        product = cursor.fetchone()
+        product = [p for p in products if p[0] == product_id][0]
     recommended = knn(products, product)
     response = {}
     print(recommended)
