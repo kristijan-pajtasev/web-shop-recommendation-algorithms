@@ -14,9 +14,10 @@ def similar(request, product_id):
             FROM olist.products 
             WHERE   product_width_cm is not null AND 
                     product_length_cm is not null AND 
-                    product_height_cm is not null
+                    product_height_cm is not null AND
+                    product_id != %s
         '''
-        cursor.execute(sql_all)
+        cursor.execute(sql_all, [product_id])
         products = cursor.fetchall()
 
         sql_product = '''select product_id, product_width_cm, product_length_cm, product_height_cm 
@@ -26,7 +27,8 @@ def similar(request, product_id):
     recommended = knn(products, product)
     response = {}
     print(recommended)
-    response['ids'] = list(recommended)
+
+    response['ids'] = list([p for p in recommended if p != product_id][:5])
     return JsonResponse(response)
 
 def basket(request, order_id):
