@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db import connection
-from .algorithms import knn, market_basket
+from .algorithms import knn, market_basket, customer_market_basket
 from django.http import JsonResponse
 
 
@@ -55,13 +55,59 @@ def basket(request, customer_id):
             group by O.order_id, O.product_id;
         ''' % product_ids_string
         print("sql", sql_param)
-        print("prduct_ids", product_ids)
-        print("prduct_ids_string", product_ids_string)
+        print("product_ids", product_ids)
+        print("product_ids_string", product_ids_string)
 
         cursor.execute(sql_param)
         orders = cursor.fetchall()
         print("orders", orders)
         results = market_basket(orders, product_ids)
+        print("results", results)
+    res = {}
+    res['recommended'] = []
+    for result in results:
+        for product_id in result:
+            if product_id not in res['recommended']:
+                res['recommended'].append(product_id)
+    return JsonResponse(res)
+    return JsonResponse(response)
+
+GET_CUSTOMER_BASKET_SQL = "SELECT product_id FROM olist.customer_product WHERE customer_id=%s"
+
+def customer_basket(request, customer_id):
+    print("CUSTOMER ID %s" % customer_id)
+
+    with connection.cursor() as cursor:
+        cursor.execute(GET_BASKET_SQL, [customer_id])
+        products = cursor.fetchall()
+        if len(products) == 0:
+            return JsonResponse({"recommended": []})
+
+        print("PRODUCTS FROM CART:")
+        print(products)
+        print(str(list(map(lambda x: x[0], products))).replace("[", "").replace("]", ""))
+        product_ids = list(map(lambda x: x[0], products))
+        product_ids_string = str(product_ids).replace("[", "").replace("]", "")
+
+        sql_param = '''
+            select O.customer_id, O.product_id 
+            from olist.customer_product as O 
+            INNER JOIN (
+                select distinct customer_id 
+                from olist.customer_product 
+                where product_id IN (%s)
+            ) as OD 
+            ON O.customer_id = OD.customer_id
+            group by O.customer_id, O.product_id;
+        ''' % product_ids_string
+        print("sql", sql_param)
+        print("product_ids", product_ids)
+        print("product_ids_string", product_ids_string)
+
+        cursor.execute(sql_param)
+        orders = cursor.fetchall()
+        print("orders", orders)
+        results = customer_market_basket(orders, product_ids)
         print("results", results)
     res = {}
     res['recommended'] = []
