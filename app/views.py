@@ -27,9 +27,7 @@ def similar(request, product_id):
     return JsonResponse(response)
 
 GET_BASKET_SQL = "SELECT product_id FROM olist.shopping_cart WHERE customer_id=%s"
-
-def basket(request, customer_id):
-    print("CUSTOMER ID %s" % customer_id)
+def get_market_basked(customer_id):
 
     with connection.cursor() as cursor:
         cursor.execute(GET_BASKET_SQL, [customer_id])
@@ -63,6 +61,11 @@ def basket(request, customer_id):
         print("orders", orders)
         results = market_basket(orders, product_ids)
         print("results", results)
+        return results
+
+def order_basket(request, customer_id):
+    print("CUSTOMER ID %s" % customer_id)
+    results = get_market_basked(customer_id)
     res = {}
     res['recommended'] = []
     for result in results:
@@ -70,13 +73,21 @@ def basket(request, customer_id):
             if product_id not in res['recommended']:
                 res['recommended'].append(product_id)
     return JsonResponse(res)
-    return JsonResponse(response)
 
-GET_CUSTOMER_BASKET_SQL = "SELECT product_id FROM olist.customer_product WHERE customer_id=%s"
 
 def customer_basket(request, customer_id):
     print("CUSTOMER ID %s" % customer_id)
+    results = get_customer_basket(customer_id)
+    res = {}
+    res['recommended'] = []
+    for result in results:
+        for product_id in result:
+            if product_id not in res['recommended']:
+                res['recommended'].append(product_id)
+    return JsonResponse(res)
 
+GET_CUSTOMER_BASKET_SQL = "SELECT product_id FROM olist.customer_product WHERE customer_id=%s"
+def get_customer_basket(customer_id):
     with connection.cursor() as cursor:
         cursor.execute(GET_BASKET_SQL, [customer_id])
         products = cursor.fetchall()
@@ -109,11 +120,19 @@ def customer_basket(request, customer_id):
         print("orders", orders)
         results = customer_market_basket(orders, product_ids)
         print("results", results)
-    res = {}
-    res['recommended'] = []
-    for result in results:
-        for product_id in result:
-            if product_id not in res['recommended']:
-                res['recommended'].append(product_id)
-    return JsonResponse(res)
+        return results
 
+def basket(request, customer_id):
+    res = { 'recommended': [] }
+
+    for e in get_market_basked(customer_id):
+        for recommended_product in e:
+            if recommended_product not in res['recommended']:
+                res['recommended'].append(recommended_product)
+
+    for e in get_customer_basket(customer_id):
+        for recommended_product in e:
+            if recommended_product not in res['recommended']:
+                res['recommended'].append(recommended_product)
+
+    return JsonResponse(res)
